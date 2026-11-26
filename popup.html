@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font: 14px -apple-system, system-ui, sans-serif; width: 240px; margin: 0; padding: 16px; color: #fff; background: #141414; }
+    h1 { font-size: 15px; margin: 0 0 4px; }
+    p { font-size: 12px; color: #b3b3b3; margin: 0 0 14px; line-height: 1.4; }
+    .row { display: flex; align-items: center; justify-content: space-between; }
+    .switch { position: relative; width: 46px; height: 26px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background: #555; border-radius: 26px; transition: .2s; }
+    .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+    input:checked + .slider { background: #e50914; }
+    input:checked + .slider:before { transform: translateX(20px); }
+    .status { font-size: 12px; margin-top: 12px; color: #46d369; }
+    .status.off { color: #b3b3b3; }
+    .hint { font-size: 11px; color: #808080; margin-top: 12px; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <h1>Netflix Windowed Games</h1>
+  <p>Stops games from forcing fullscreen so you can resize the window and FaceTime alongside.</p>
+  <div class="row">
+    <span>Keep games windowed</span>
+    <label class="switch">
+      <input type="checkbox" id="toggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="status" id="status">On</div>
+  <div class="hint">After toggling, reload the Netflix tab for it to take effect.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

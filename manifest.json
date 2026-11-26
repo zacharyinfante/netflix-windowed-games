@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Netflix Windowed Games",
+  "version": "1.0.0",
+  "description": "Keeps Netflix browser games running in a window instead of forcing fullscreen, so you can FaceTime / multitask alongside.",
+  "permissions": ["storage"],
+  "host_permissions": ["*://*.netflix.com/*"],
+  "action": {
+    "default_title": "Netflix Windowed Games",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.netflix.com/*"],
+      "js": ["inject.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://*.netflix.com/*"],
+      "js": ["loader.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
