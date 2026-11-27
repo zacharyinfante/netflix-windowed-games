@@ -1,6 +1,6 @@
 // Generates icons/icon{16,48,128}.png with zero dependencies.
-// A Netflix-red rounded tile with a white "window" (title bar + dots) and a
-// red play triangle inside it — i.e. a windowed game.
+// A Netflix-red rounded tile with a "window-in-window" (picture-in-picture):
+// a large white window frame with a small solid window in the lower-right.
 import zlib from "node:zlib";
 import fs from "node:fs";
 import path from "node:path";
@@ -11,8 +11,6 @@ const SS = 4; // supersample factor for anti-aliasing
 
 const RED = [229, 9, 20];
 const WHITE = [255, 255, 255];
-const TITLE = [228, 228, 234];
-const DOT = [150, 150, 160];
 
 function roundRectSDF(u, v, x0, y0, x1, y1, r) {
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -23,30 +21,23 @@ function roundRectSDF(u, v, x0, y0, x1, y1, r) {
   return Math.hypot(ox, oy) + Math.min(Math.max(qx, qy), 0) - r;
 }
 
-function inTriangle(px, py, ax, ay, bx, by, cx, cy) {
-  const d1 = (px - bx) * (ay - by) - (ax - bx) * (py - by);
-  const d2 = (px - cx) * (by - cy) - (bx - cx) * (py - cy);
-  const d3 = (px - ax) * (cy - ay) - (cx - ax) * (py - ay);
-  const neg = d1 < 0 || d2 < 0 || d3 < 0;
-  const pos = d1 > 0 || d2 > 0 || d3 > 0;
-  return !(neg && pos);
-}
+const inRR = (u, v, x0, y0, x1, y1, r) => roundRectSDF(u, v, x0, y0, x1, y1, r) <= 0;
 
 function sample(u, v) {
-  // returns [r,g,b,a] at normalized point
-  if (roundRectSDF(u, v, 0, 0, 1, 1, 0.18) > 0) return [0, 0, 0, 0];
+  if (!inRR(u, v, 0, 0, 1, 1, 0.18)) return [0, 0, 0, 0];
   let col = [...RED];
-  const inWindow = roundRectSDF(u, v, 0.2, 0.3, 0.8, 0.74, 0.07) <= 0;
-  if (inWindow) {
-    col = v < 0.42 ? [...TITLE] : [...WHITE];
-    if (v < 0.42) {
-      for (const du of [0.265, 0.315, 0.365]) {
-        if (Math.hypot(u - du, v - 0.36) < 0.018) col = [...DOT];
-      }
-    } else if (inTriangle(u, v, 0.445, 0.48, 0.445, 0.68, 0.63, 0.58)) {
-      col = [...RED];
-    }
-  }
+
+  // Large window frame: white outer ring, red interior. Inner radius is the
+  // outer radius minus the 0.05 border so the corners stay concentric — an
+  // even border on right/top/bottom/left and around the corners.
+  if (inRR(u, v, 0.17, 0.23, 0.83, 0.69, 0.08)) col = [...WHITE];
+  if (inRR(u, v, 0.22, 0.28, 0.78, 0.64, 0.03)) col = [...RED];
+
+  // Small window (picture-in-picture) in the lower-right, with an even 0.03
+  // red gap so it reads as sitting on top of the frame.
+  if (inRR(u, v, 0.49, 0.47, 0.81, 0.70, 0.05)) col = [...RED];
+  if (inRR(u, v, 0.52, 0.50, 0.78, 0.67, 0.02)) col = [...WHITE];
+
   return [col[0], col[1], col[2], 255];
 }
 
