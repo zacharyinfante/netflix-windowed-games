@@ -1,0 +1,17 @@
+{
+  "name": "netflix-windowed-games",
+  "version": "1.0.0",
+  "description": "Chrome extension to keep Netflix browser games windowed instead of fullscreen.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "icons": "node scripts/gen-icons.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "node scripts/build.mjs",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "typescript": "^5.7.2"
+  }
+}
